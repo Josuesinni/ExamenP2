@@ -1,6 +1,10 @@
 package mx.edu.itesca.examenp2
 
+import android.content.Context
+import android.content.Intent
+import android.media.Image
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -14,7 +18,6 @@ import androidx.core.view.WindowInsetsCompat
 
 class Regalos : AppCompatActivity() {
 
-    val adaptador=RegalosAdapter()
     val detalles=ArrayList<Detalles>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +30,7 @@ class Regalos : AppCompatActivity() {
             titulo.setText(bundle.getString("titulo"))
         }
         cargarDetalles(titulo.text.toString())
+        val adaptador=RegalosAdapter(this,detalles)
 
         val gridView=findViewById<GridView>(R.id.gridView)
         gridView.adapter=adaptador
@@ -82,9 +86,14 @@ class Regalos : AppCompatActivity() {
     }
 }
 
-class RegalosAdapter:BaseAdapter(){
-    val detalles=ArrayList<Detalles>()
-    val context=this
+class RegalosAdapter:BaseAdapter{
+    var detalles=ArrayList<Detalles>()
+    var contexto: Context?=null
+
+    constructor(contexto: Context, detalles: ArrayList<Detalles>){
+        this.detalles=detalles
+        this.contexto=contexto
+    }
 
     override fun getCount(): Int {
         return detalles.size
@@ -100,12 +109,21 @@ class RegalosAdapter:BaseAdapter(){
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val detalle=detalles[position]
-        val vista=layoutInflater.inflate(R.layout.activity_regalos,null)
+        val inflador:LayoutInflater=LayoutInflater.from(parent?.context)
+        val vista=inflador.inflate(R.layout.activity_detalle_view,null)
 
+        vista.findViewById<ImageView>(R.id.iv_detalle).setImageResource(detalle.imagen)
 
-        detalle.imagen
-        detalle.precio
+        vista.findViewById<ImageView>(R.id.iv_detalle).setOnClickListener{
+            if (vista!=null){
+                val intent:Intent=Intent(vista.context,DetalleRegalos::class.java)
+                intent.putExtra("imagen",detalle.imagen)
+                intent.putExtra("precio",detalle.precio)
+                vista.context.startActivity(intent)
+            }
+        }
         return vista
+
     }
 
 }

@@ -13,6 +13,9 @@
         android:theme="@style/Theme.ExamenP2"
         tools:targetApi="31">
         <activity
+            android:name=".DetalleView"
+            android:exported="false" />
+        <activity
             android:name=".DetalleRegalos"
             android:exported="false" />
         <activity
